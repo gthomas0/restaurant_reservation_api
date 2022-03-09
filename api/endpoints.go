@@ -2,40 +2,41 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 /*
 	Patron Section
 */
-func getPatrons(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	defer fmt.Println("Endpoint Hit: getPatrons")
-
-	body, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	log.Println(body)
+type Patron struct {
+	Id int `json:"id"`
 }
 
-func postPatrons(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	defer fmt.Println("Endpoint Hit: postPatrons")
+func getPatrons(c echo.Context) error {
+	defer fmt.Println("Endpoint Hit: getPatrons")
 
-	body, err := ioutil.ReadAll(r.Body)
+	patron := new(Patron)
 
-	if err != nil {
-		log.Fatalln(err)
+	if err := c.Bind(patron); err != nil {
+		return err
 	}
 
-	log.Println(body)
+	return c.JSON(http.StatusOK, patron)
+}
+
+func postPatrons(c echo.Context) error {
+	defer fmt.Println("Endpoint Hit: postPatrons")
+
+	patron := new(Patron)
+
+	if err := c.Bind(patron); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, patron)
 }
 
 /*
@@ -43,15 +44,16 @@ func postPatrons(w http.ResponseWriter, r *http.Request) {
 */
 func HandleRequests() {
 	// create mux router
-	router := mux.NewRouter()
+	router := echo.New()
 
-	// handle endpoints
-	router.HandleFunc("/patrons", getPatrons).Methods("GET")
-	router.HandleFunc("/patrons", postPatrons).Methods("POST")
+	// middleware
+	router.Use(middleware.Logger())
+	router.Use(middleware.Recover())
 
-	// set handler to use /
-	http.Handle("/", router)
+	// routes
+	router.GET("/patrons", getPatrons)
+	router.POST("/patrons", postPatrons)
 
-	// log fatal errors
-	log.Fatal(http.ListenAndServe(":10000", nil))
+	// start server
+	router.Logger.Fatal(router.Start(":10000"))
 }
