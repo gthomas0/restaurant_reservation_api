@@ -1,3 +1,4 @@
+// Package api implements the API endpoints needed for the restaurant reservation API.
 package api
 
 import (
@@ -11,32 +12,32 @@ import (
 /*
 	Patron Section
 */
-type Patron struct {
+type patron struct {
 	Id int `json:"id"`
 }
 
 func getPatrons(c echo.Context) error {
 	defer fmt.Println("Endpoint Hit: getPatrons")
 
-	patron := new(Patron)
+	p := new(patron)
 
-	if err := c.Bind(patron); err != nil {
+	if err := c.Bind(p); err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, patron)
+	return c.JSON(http.StatusOK, p)
 }
 
 func postPatrons(c echo.Context) error {
 	defer fmt.Println("Endpoint Hit: postPatrons")
 
-	patron := new(Patron)
+	p := new(patron)
 
-	if err := c.Bind(patron); err != nil {
+	if err := c.Bind(p); err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, patron)
+	return c.JSON(http.StatusOK, p)
 }
 
 /*
