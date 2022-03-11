@@ -5,6 +5,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -44,4 +45,7 @@ func ConnectDB() {
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
 	result, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		log.Fatalf("The database failed to connect: %s", err)
+	}
 }
