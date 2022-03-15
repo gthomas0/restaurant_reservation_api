@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS restaurant;
+DROP TABLE IF EXISTS patron;
