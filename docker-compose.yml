@@ -31,6 +31,12 @@ services:
             - '.:/project'
         ports:
             - 10000:10000
+        environment:
+            - DB_HOST=restaurant_reservation_api_postgres-db_1
+            - DB_USER=postgres
+            - DB_PASS=postgres
+            - DB_NAME=restaurants
+            - DB_PORT=5432
         depends_on:
             postgres-db:
                 condition: service_healthy

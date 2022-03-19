@@ -6,9 +6,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 )
 
@@ -51,13 +53,13 @@ func InsertPatron(class Patron) {
 	Database Connection Section
 */
 func ConnectDB() {
-	host := "127.0.0.1"
-	port := "5432"
-	user := "postgres"
-	password := "postgres"
-	dbName := "restaurants"
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASS")
+	name := os.Getenv("DB_NAME")
 
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, pass, name)
 	database, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatalf("The database failed to connect: %s", err)
@@ -77,7 +79,7 @@ func MigrateDB() {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///migrations",
+		"file:///restaurant_reservation_api/database/migrations",
 		"postgres", driver)
 	if err != nil {
 		log.Fatalf("Failed to initialize the migration handler: %s", err)
